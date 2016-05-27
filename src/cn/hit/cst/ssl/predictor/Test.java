@@ -68,8 +68,26 @@ public class Test {
 						jobType = constructJobType(type, name, historyJobs);
 						nameMap.put(name, jobType);
 					}
-					else
-						nameMap.get(name).addHistoryJob(yarnHistoryJob);
+					else {
+						jobType = nameMap.get(name);
+						jobType.addHistoryJob(yarnHistoryJob);
+						//triggered when adding any history job to any job type of any framework
+						//TODO: train the job type model in two trategies:
+						//1. train it only when the count of a type reach args[1]
+						if (jobType.getHistoryJobs().size() == Integer.valueOf(args[1])) {
+							//TODO: train the corresponding model
+							System.out.println(jobType.getType() + " "
+									+ jobType.getName() + " job reaches " + args[1] + "...");
+							jobType.trainModel();
+						}
+						//2. train it whenever args[1] history job has been added
+//						if ((jobType.getHistoryJobs().size() % Integer.valueOf(args[1])) == 0) {
+//							System.out.println(jobType.getType() + " "
+//									+ jobType.getName() + " job reaches " 
+//									+ jobType.getHistoryJobs().size() + "...");
+//							jobType.trainModel();
+//						}
+					}
 				}
 				//Obsolete, reconstructed
 				//test if some job type have been executed more than args[1] times
