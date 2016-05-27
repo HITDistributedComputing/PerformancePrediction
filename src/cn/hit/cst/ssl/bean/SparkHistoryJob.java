@@ -1,10 +1,12 @@
-package cn.hit.cst.ssl.bean.jsonbean;
+package cn.hit.cst.ssl.bean;
 
 import java.util.ArrayList;
 
+import cn.hit.cst.ssl.bean.jsonbean.Host;
 import cn.hit.cst.ssl.utils.SLLNode;
 import cn.hit.cst.ssl.utils.SortedLinkedList;
 
+//only use addHost() to add host, which could guarantee the hosts array to be descendingly sorted
 public class SparkHistoryJob extends YARNHistoryJob {
 	private ArrayList<Host> hosts;
 	
@@ -22,10 +24,9 @@ public class SparkHistoryJob extends YARNHistoryJob {
 		String[] lineArray = line.split("\t");
 		this.hosts = new ArrayList<Host>();
 		for (int i = 6; i < lineArray.length; i+= 4) {
-			hosts.add(new Host(lineArray[i], Long.valueOf(lineArray[i + 1]), 
-					Integer.valueOf(lineArray[i + 2]), Integer.valueOf(lineArray[i + 2])));
+			this.addHost(new Host(lineArray[i], Long.valueOf(lineArray[i + 1]), 
+					Integer.valueOf(lineArray[i + 2]), Integer.valueOf(lineArray[i + 3])));
 		}
-		sortHostByDuration();
 	}
 	
 	public String getNewSparkHistoryJob(){
@@ -56,5 +57,10 @@ public class SparkHistoryJob extends YARNHistoryJob {
 	
 	public int getX(){
 		return hosts.get(0).getTotalDuration();
+	}
+	
+	public void addHost(Host host){
+		this.hosts.add(host);
+		sortHostByDuration();
 	}
 }

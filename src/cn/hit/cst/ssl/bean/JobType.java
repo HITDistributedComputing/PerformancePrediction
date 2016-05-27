@@ -2,7 +2,7 @@ package cn.hit.cst.ssl.bean;
 
 import java.util.ArrayList;
 
-import cn.hit.cst.ssl.bean.jsonbean.YARNHistoryJob;
+import cn.hit.cst.ssl.exception.NullModelException;
 import cn.hit.cst.ssl.predictor.PredictionModel;
 
 public abstract class JobType {
@@ -64,4 +64,8 @@ public abstract class JobType {
 	}
 	
 	public abstract void trainModel();
+	
+	public abstract double predictMBSecByIndex(int index) throws NullModelException;
+	
+	public abstract double predictVCoreSecByIndex(int index) throws NullModelException;
 }

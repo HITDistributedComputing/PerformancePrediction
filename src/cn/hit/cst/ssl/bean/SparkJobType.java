@@ -3,8 +3,7 @@ package cn.hit.cst.ssl.bean;
 import java.util.ArrayList;
 import java.util.Map;
 
-import cn.hit.cst.ssl.bean.jsonbean.SparkHistoryJob;
-import cn.hit.cst.ssl.bean.jsonbean.YARNHistoryJob;
+import cn.hit.cst.ssl.exception.NullModelException;
 import cn.hit.cst.ssl.predictor.PredictionModel;
 import cn.hit.cst.ssl.predictor.regression.DualLinearRegressionModel;
 
@@ -44,5 +43,19 @@ public class SparkJobType extends JobType {
 		}
 		this.predictor = new DualLinearRegressionModel();
 		this.predictor.trainModel(x, mbY, cpuY);
+	}
+
+	@Override
+	public double predictMBSecByIndex(int index) throws NullModelException {
+		// TODO Auto-generated method stub
+		SparkHistoryJob jobHistory = (SparkHistoryJob)this.historyJobs.get(index);
+		return this.getPredictor().predictMBSec(jobHistory.getX());
+	}
+
+	@Override
+	public double predictVCoreSecByIndex(int index) throws NullModelException {
+		// TODO Auto-generated method stub
+		SparkHistoryJob jobHistory = (SparkHistoryJob)this.historyJobs.get(index);
+		return this.getPredictor().predictVCoreSec(jobHistory.getX());
 	}
 }

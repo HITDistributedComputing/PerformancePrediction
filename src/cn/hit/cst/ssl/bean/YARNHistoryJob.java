@@ -1,4 +1,4 @@
-package cn.hit.cst.ssl.bean.jsonbean;
+package cn.hit.cst.ssl.bean;
 
 public abstract class YARNHistoryJob {
 	protected String appId;
@@ -29,6 +29,15 @@ public abstract class YARNHistoryJob {
 		this.elapsedTime = Integer.valueOf(lineArray[3]);
 		this.mbSec = Long.valueOf(lineArray[4]);
 		this.vcoreSec = Integer.valueOf(lineArray[5]);
+	}
+	
+	//AppId name type input elapsedTime mb-sec vcore-sec
+	public String getJobHistoryTable(){
+		return this.appId + "\t"
+				+ this.name + "\t"
+				+ this.type + "\t"
+				+ this.mbSec + "\t"
+				+ this.vcoreSec + "\t";
 	}
 	
 	public String getAppId() {

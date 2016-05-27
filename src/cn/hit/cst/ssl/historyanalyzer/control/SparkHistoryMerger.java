@@ -7,8 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.hit.cst.ssl.bean.SparkHistoryJob;
 import cn.hit.cst.ssl.bean.jsonbean.Host;
-import cn.hit.cst.ssl.bean.jsonbean.SparkHistoryJob;
 import cn.hit.cst.ssl.utils.FileUtils;
 
 public class SparkHistoryMerger {

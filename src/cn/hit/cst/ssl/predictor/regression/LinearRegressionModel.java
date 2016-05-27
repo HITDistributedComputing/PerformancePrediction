@@ -41,18 +41,18 @@ public class LinearRegressionModel {
             yybar += (y[i] - ybar) * (y[i] - ybar);
             xybar += (x[i] - xbar) * (y[i] - ybar);
         }
-        double beta1 = xybar / xxbar;
-        double beta0 = ybar - beta1 * xbar;
+        this.beta1 = xybar / xxbar;
+        this.beta0 = ybar - this.beta1 * xbar;
         
         // print results
-        System.out.println("y   = " + beta1 + " * x + " + beta0);
+        System.out.println("y   = " + this.beta1 + " * x + " + this.beta0);
         
         // analyze results
         int df = count - 2;
         double rss = 0.0;      // residual sum of squares
         double ssr = 0.0;      // regression sum of squares
         for (int i = 0; i < count; i++) {
-            double fit = beta1*x[i] + beta0;
+            double fit = this.beta1*x[i] + this.beta0;
             rss += (fit - y[i]) * (fit - y[i]);
             ssr += (fit - ybar) * (fit - ybar);
         }
@@ -72,6 +72,6 @@ public class LinearRegressionModel {
 	}
 	
 	public double predictY(double x){
-		return (beta1 * x + beta0);
+		return (this.beta1 * x + this.beta0);
 	}
 }

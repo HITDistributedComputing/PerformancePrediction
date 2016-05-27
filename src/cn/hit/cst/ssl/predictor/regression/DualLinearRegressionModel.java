@@ -16,7 +16,7 @@ public class DualLinearRegressionModel implements PredictionModel {
 	}
 
 	@Override
-	public double getMBSec(double duration) throws NullModelException {
+	public double predictMBSec(double duration) throws NullModelException {
 		// TODO Auto-generated method stub
 		if (mbSecRegression == null) 
 			throw new NullModelException(this.getClass().toString());
@@ -25,7 +25,7 @@ public class DualLinearRegressionModel implements PredictionModel {
 	}
 
 	@Override
-	public double getVCoreSec(double duration) throws NullModelException {
+	public double predictVCoreSec(double duration) throws NullModelException {
 		// TODO Auto-generated method stub
 		if (this.cpuSecRegression == null) 
 			throw new NullModelException(this.getClass().toString());

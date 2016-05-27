@@ -10,14 +10,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.hit.cst.ssl.bean.JobType;
+import cn.hit.cst.ssl.bean.SparkHistoryJob;
 import cn.hit.cst.ssl.bean.SparkJobType;
-import cn.hit.cst.ssl.bean.jsonbean.SparkHistoryJob;
-import cn.hit.cst.ssl.bean.jsonbean.YARNHistoryJob;
+import cn.hit.cst.ssl.bean.YARNHistoryJob;
+import cn.hit.cst.ssl.exception.NullModelException;
+import cn.hit.cst.ssl.utils.FileUtils;
 import sun.awt.image.OffScreenImage;
 
 public class Test {
 	//args[0]: input file path
 	//args[1]: start to train the model when we got args[1] samples
+	//args[2]: file path for output prediction results
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//ÊäÈë×÷Òµfeature
@@ -32,7 +35,9 @@ public class Test {
 		String line, type, name;
 		YARNHistoryJob yarnHistoryJob; 
 		
-		int itrCount = 0;
+		ArrayList<String> jobData = new ArrayList<String>();
+		jobData.add("AppId\tName\tType\tMBSec\tVCoreSec\tPredictedMB\tPredictedCPU\n");
+
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			reader.readLine();
@@ -74,19 +79,31 @@ public class Test {
 						//triggered when adding any history job to any job type of any framework
 						//TODO: train the job type model in two trategies:
 						//1. train it only when the count of a type reach args[1]
-						if (jobType.getHistoryJobs().size() == Integer.valueOf(args[1])) {
+						//count: current history job count of jobType
+						int count = jobType.getHistoryJobs().size();
+						int modelRange = Integer.valueOf(args[1]);
+						if (count == modelRange) {
 							//TODO: train the corresponding model
 							System.out.println(jobType.getType() + " "
 									+ jobType.getName() + " job reaches " + args[1] + "...");
 							jobType.trainModel();
 						}
 						//2. train it whenever args[1] history job has been added
-//						if ((jobType.getHistoryJobs().size() % Integer.valueOf(args[1])) == 0) {
+//						if ((count % modelRange) == 0) {
 //							System.out.println(jobType.getType() + " "
-//									+ jobType.getName() + " job reaches " 
-//									+ jobType.getHistoryJobs().size() + "...");
+//									+ jobType.getName() + " job reaches " + count + "...");
 //							jobType.trainModel();
 //						}
+						else if(count > modelRange){
+							try {
+								jobData.add(yarnHistoryJob.getJobHistoryTable()
+										+ jobType.predictMBSecByIndex(count - 1) + "\t"
+										+ jobType.predictVCoreSecByIndex(count - 1) + "\n");
+							} catch (NullModelException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 					}
 				}
 				//Obsolete, reconstructed
@@ -105,8 +122,8 @@ public class Test {
 //						}
 //					}
 //				}
-				itrCount ++;
 			}
+			FileUtils.writeToFile(args[2], jobData);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
