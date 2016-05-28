@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import cn.hit.cst.ssl.bean.JobHistory;
+import cn.hit.cst.ssl.bean.jsonbean.MapReduceHistory;
+import cn.hit.cst.ssl.bean.jsonbean.SparkJobHistory;
 
 public class FileUtils {
 	public static File[] iterateFiles(String path){
@@ -52,6 +54,57 @@ public class FileUtils {
 			}
 		}
 		return new JobHistory(appId, inputFile);
+	}
+	
+	public static MapReduceHistory getMRJobHistory(File logFile) throws IOException{
+		//start by line 10
+		int lineNumber;
+		FileReader fReader = new FileReader(logFile);
+		LineNumberReader lReader = new LineNumberReader(fReader);
+		String tmpLine = lReader.readLine(), appId = null, jobId = null, inputFile = null;
+		String[] tmpArray;
+		while (tmpLine != null) {
+			tmpLine = lReader.readLine();
+			if (lReader.getLineNumber() == 2) {
+				tmpArray = tmpLine.split("/");
+				inputFile = tmpArray[tmpArray.length - 1];
+			}
+			else if (tmpLine.contains("Submitted application")) {
+				tmpArray = tmpLine.split(" ");
+				appId = tmpArray[tmpArray.length - 1];
+			}
+			else if (tmpLine.contains("Submitting tokens for job")){
+				tmpArray = tmpLine.split(" ");
+				jobId = tmpArray[tmpArray.length - 1];
+			}
+			
+			if(appId!=null && jobId!=null){
+				break;
+			}
+		}
+		return new MapReduceHistory(appId, jobId, inputFile);
+	}
+	
+	public static SparkJobHistory getSparkJobHistory(File logFile) throws IOException{
+		//start by line 10
+		int lineNumber;
+		FileReader fReader = new FileReader(logFile);
+		LineNumberReader lReader = new LineNumberReader(fReader);
+		String tmpLine = lReader.readLine(), appId = null, inputFile = null;
+		String[] tmpArray;
+		while (tmpLine != null) {
+			tmpLine = lReader.readLine();
+			if (lReader.getLineNumber() == 2) {
+				tmpArray = tmpLine.split("/");
+				inputFile = tmpArray[tmpArray.length - 1];
+			}
+			else if (tmpLine.contains("Submitted application")) {
+				tmpArray = tmpLine.split(" ");
+				appId = tmpArray[tmpArray.length - 1];
+				break;
+			}
+		}
+		return new SparkJobHistory(appId, inputFile);
 	}
 	
 	public static void writeToFile(String filePath, ArrayList<String> jobData) throws IOException{

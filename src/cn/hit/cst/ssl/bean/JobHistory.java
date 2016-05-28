@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 public class JobHistory {
 	private String appId;
+	private String jobId;
 	private String name;
 	private String type;
 	private String inputSize;
@@ -28,6 +29,11 @@ public class JobHistory {
 		initInputMap();
 		this.appId = appId;
 		this.inputSize = inputSize;
+	}
+	
+	
+	public JobHistory(){
+		
 	}
 	
 	public void initInputMap(){
@@ -81,6 +87,14 @@ public class JobHistory {
 		this.appId = appId;
 	}
 	
+	public String getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -127,5 +141,9 @@ public class JobHistory {
 	
 	public void setVcoreSec(int vcoreSec) {
 		this.vcoreSec = vcoreSec;
+	}
+	
+	public Map getInputSizeMap(){
+		return inputSizeMap;
 	}
 }

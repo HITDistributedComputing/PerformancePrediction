@@ -1,34 +1,91 @@
 package cn.hit.cst.ssl.historyanalyzer.control;
 
-import org.json.JSONArray;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cn.hit.cst.ssl.bean.jsonbean.SparkJobHistory;
+import cn.hit.cst.ssl.utils.FileUtils;
 import cn.hit.cst.ssl.utils.JSONUtils;
 
 public class SparkHistoryExtractor {
-	public static void main(String args[]){
-		//从hadoop网页中按编号抓取信息
-		//根据app id与spark rest api相关联并抓取spark相关信息
-		//application_1463992848779_0001 -- 1010 中间有MR作业
-		String appSuffix = null, jsonRequestStr = null, jsonString = null;
-		int rest;
-		for(int i = 1; i < 1011; i++){
-			appSuffix = String.valueOf(i);
-			if ((rest = 4 - appSuffix.length()) > 0) {
-				for(int j = 0; j < rest; j++){
-					appSuffix = "0" + appSuffix;
-				}
-			}
-			jsonRequestStr = "http://172.29.132.196:7078/api/v1/applications/application_1463992848779_"
-					+ appSuffix + "/1/executors";
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		File[] logFiles = FileUtils.manItrFiles(args[0], "job", 1000);
+		ArrayList<String> jobData = retrieveJobData(logFiles);
+		try {
+			FileUtils.writeToFile(args[1], jobData);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Completed!");
+	}
+	
+	public static ArrayList<String> retrieveJobData(File[] logFiles){
+		String jsonStr, jsonStr2, requestStr, requestStr2, tmpJobData;
+		SparkJobHistory sparkJobHistory;
+		JSONObject temp;
+		JSONObject appJo;
+		ArrayList<String> jobData = new ArrayList<String>();
+		
+		//int extendedFileNum = 1000;
+
+		for(int i=600;i<1001;i++){
 			try {
-				jsonString = JSONUtils.getJsonString(jsonRequestStr);
-				//TODO: judge if the json string we got is a mr application
-				JSONArray jsonArray = new JSONArray(jsonString);
+				sparkJobHistory = FileUtils.getSparkJobHistory(logFiles[i]);
+				requestStr = "http://172.29.132.196:7078/api/v1/applications/"+sparkJobHistory.getAppId()+"/1/executors";
+				requestStr2 = "http://172.29.132.196:8088/ws/v1/cluster/apps/" + sparkJobHistory.getAppId();
+				jsonStr = JSONUtils.getJsonString(requestStr);
+				jsonStr2 = JSONUtils.getJsonString(requestStr2);
+				JSONArray jArray = new JSONArray(jsonStr);
+				appJo = (new JSONObject(jsonStr2)).getJSONObject("app");
+				
+				if(i==1){
+					tmpJobData = sparkJobHistory.getTableHeader();
+					jobData.add(tmpJobData);
+				}
+				
+				for(int k=0;k<jArray.length();k++){
+					temp = jArray.getJSONObject(k);
+					String tmpstr = temp.getString("id");
+					if(!tmpstr.equals("driver")){
+						sparkJobHistory.setByJSON(appJo);
+						sparkJobHistory.setSparkByJSON(temp);
+						tmpJobData = sparkJobHistory.getJobHistoryTable();
+						jobData.add(tmpJobData);
+					}
+				}
+				System.out.println(i + "record added!");
+				/*sparkJobHistory1.setByJSON(appJo1);
+				appJo1 = jArray.getJSONObject(0);
+				sparkJobHistory1.setByJSON(appJo1);
+				appJo2 = jArray.getJSONObject(2);
+				sparkJobHistory2.setByJSON(appJo2);
+				tmpJobData = sparkJobHistory1.getJobHistoryTable();
+				jobData.add(tmpJobData);
+				tmpJobData = sparkJobHistory2.getJobHistoryTable();
+				jobData.add(tmpJobData);*/
+			
+			} catch (NullPointerException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Crashed record on iteration: " );
+				System.out.println(i);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
+		return jobData;
 	}
+
 }
