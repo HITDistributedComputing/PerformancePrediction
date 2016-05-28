@@ -34,7 +34,7 @@ public class SparkHistoryMerger {
 				lastApp = line1Array[0];
 				hosts = new ArrayList<Host>();
 				hosts.add(new Host(line1Array[3], Long.valueOf(line1Array[4]), 
-						Integer.valueOf(line1Array[5]), Integer.valueOf(line1Array[6])));
+						Integer.valueOf(line1Array[5]), Double.valueOf(line1Array[6])));
 				lines.add(new SparkHistoryJob(line1Array[0], line1Array[1], line1Array[2], hosts, 
 						Integer.valueOf(line1Array[7]), Long.valueOf(line1Array[8]), Integer.valueOf(line1Array[9])));
 				while (true) {
@@ -49,7 +49,7 @@ public class SparkHistoryMerger {
 					System.out.println(line1Array[0] + " " + line1Array[3]);
 					if (line1Array[0].equals(lastApp)) {
 						hosts.add(new Host(line1Array[3], Long.valueOf(line1Array[4]), 
-						Integer.valueOf(line1Array[5]), Integer.valueOf(line1Array[6])));
+						Integer.valueOf(line1Array[5]), Double.valueOf(line1Array[6])));
 					}
 					else {
 						reader.reset();

@@ -1,32 +1,81 @@
 package cn.hit.cst.ssl.bean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.corba.se.spi.activation.Server;
+
+import cn.hit.cst.ssl.bean.jsonbean.Host;
 import cn.hit.cst.ssl.exception.NullModelException;
 import cn.hit.cst.ssl.predictor.PredictionModel;
 import cn.hit.cst.ssl.predictor.regression.DualLinearRegressionModel;
 
 public class SparkJobType extends JobType {
 	//avgTaskTime on server "String"
-	private Map<String, Integer> avgTaskTime;
+	//update scenario: whenever a new history job is added to JobType
+	private Map<String, ServerAvgTaskTime> avgTaskTimeMap;
 	
-	public SparkJobType(PredictionModel predictor, String type, 
-			String name, ArrayList<YARNHistoryJob> sparkHistoryJobs) {
-		super(predictor, type, name, sparkHistoryJobs);
+	public class ServerAvgTaskTime{
+		private Double avgTaskTime;
+		private int taskCount;
+		
+		public ServerAvgTaskTime(Double avgTaskTime, int taskCount) {
+			super();
+			this.avgTaskTime = avgTaskTime;
+			this.taskCount = taskCount;
+		}
+
+		public Double getAvgTaskTime() {
+			return avgTaskTime;
+		}
+
+		public void setAvgTaskTime(Double avgTaskTime) {
+			this.avgTaskTime = avgTaskTime;
+		}
+
+		public int getTaskCount() {
+			return taskCount;
+		}
+
+		public void setTaskCount(int taskCount) {
+			this.taskCount = taskCount;
+		}
+		//the only function for updating avgTaskTime
+		//TODO:
+		//1. update avgTT D
+		//2. update taskCount D
+		//3. problem still exists: whether it's proper to see a job as an average unit
+		//(we can substitute by using a task as an average unit
+		public void update(Double newTaskTime){
+			this.avgTaskTime = ((this.avgTaskTime * taskCount) + newTaskTime) / (taskCount + 1);
+			this.taskCount ++;
+		}
 	}
 	
 	public SparkJobType(String type, String name, 
-			ArrayList<YARNHistoryJob> sparkHistoryJobs) {
-		super(type, name, sparkHistoryJobs);
+			YARNHistoryJob sparkHistoryJob) {
+		super(type, name, sparkHistoryJob);
+		this.avgTaskTimeMap = new HashMap<String, ServerAvgTaskTime>();
+		
+		ArrayList<Host> hosts = ((SparkHistoryJob)sparkHistoryJob).getHosts();
+		ServerAvgTaskTime serverAvgTaskTime;
+		Double avgTaskTime;
+		
+		for (Host host : hosts) {
+			avgTaskTime = host.getTotalDuration() / host.getTotalTask();
+			//create new ServerAvgTaskTime
+			serverAvgTaskTime = new ServerAvgTaskTime(avgTaskTime, 1);
+			this.avgTaskTimeMap.put(host.getHostPort(), serverAvgTaskTime);
+		}
 	}
 
-	public Map<String, Integer> getAvgTaskTime() {
-		return avgTaskTime;
+	public Map<String, ServerAvgTaskTime> getAvgTaskTimeMap() {
+		return avgTaskTimeMap;
 	}
 
-	public void setAvgTaskTime(Map<String, Integer> avgTaskTime) {
-		this.avgTaskTime = avgTaskTime;
+	public void setAvgTaskTimeMap(Map<String, ServerAvgTaskTime> avgTaskTimeMap) {
+		this.avgTaskTimeMap = avgTaskTimeMap;
 	}
 
 	@Override
@@ -44,18 +93,59 @@ public class SparkJobType extends JobType {
 		this.predictor = new DualLinearRegressionModel();
 		this.predictor.trainModel(x, mbY, cpuY);
 	}
+	
+	@Override
+	//the two only entrance (together with constructor) 
+	//for adding history job, will update avgtasktime
+	public void addHistoryJob(YARNHistoryJob historyJob) {
+		//TODO: 1. add history job using super.add D
+		//2. update the avgTaskTimeMap D
+		//3. make sure all the entrance for adding history job including constructor
+		//to update avgTaskTimeMap D
+		//4. integrate the Model Training Trigger here
+		super.addHistoryJob(historyJob);
+		SparkHistoryJob sparkHistoryJob = (SparkHistoryJob) historyJob;
+		ArrayList<Host> hosts = sparkHistoryJob.getHosts();
+		//temp variables for iteration
+		Host host;
+		String hostPort;
+		Double avgTaskTime;
+		ServerAvgTaskTime serverAvgTaskTime;
+		
+		for (int i = 0;  i < hosts.size(); i++){
+			host = hosts.get(i);
+			hostPort = host.getHostPort();
+			avgTaskTime = host.getTotalDuration() / host.getTotalTask();
+			if (this.avgTaskTimeMap.get(hostPort) == null) {
+				serverAvgTaskTime = new ServerAvgTaskTime(avgTaskTime, 1);
+				avgTaskTimeMap.put(hostPort, serverAvgTaskTime);
+			}
+			else {
+				serverAvgTaskTime = this.avgTaskTimeMap.get(hostPort);
+				serverAvgTaskTime.update(avgTaskTime);
+			}
+		}
+	}
 
 	@Override
 	public double predictMBSecByIndex(int index) throws NullModelException {
 		// TODO Auto-generated method stub
 		SparkHistoryJob jobHistory = (SparkHistoryJob)this.historyJobs.get(index);
-		return this.getPredictor().predictMBSec(jobHistory.getX());
+		String hostName = jobHistory.getLongestHost().getHostPort();
+		Double avgTaskTime = this.avgTaskTimeMap.get(hostName).getAvgTaskTime();
+		return this.getPredictor().predictMBSec(jobHistory.getXbyTaskTime(avgTaskTime));
 	}
 
 	@Override
 	public double predictVCoreSecByIndex(int index) throws NullModelException {
 		// TODO Auto-generated method stub
+		//1. predict directly by duration
+//		SparkHistoryJob jobHistory = (SparkHistoryJob)this.historyJobs.get(index);
+//		return this.getPredictor().predictVCoreSec(jobHistory.getX());
+		//2. predict by calculating duration through avgTaskTime
 		SparkHistoryJob jobHistory = (SparkHistoryJob)this.historyJobs.get(index);
-		return this.getPredictor().predictVCoreSec(jobHistory.getX());
+		String hostName = jobHistory.getLongestHost().getHostPort();
+		Double avgTaskTime = this.avgTaskTimeMap.get(hostName).getAvgTaskTime();
+		return this.getPredictor().predictMBSec(jobHistory.getXbyTaskTime(avgTaskTime));
 	}
 }

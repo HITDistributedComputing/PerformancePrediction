@@ -29,7 +29,7 @@ public class SLLNode<T extends Sortable>{
 		return this.element.getMyKey() > newNode.getMyKey();
 	}
 	
-	public int getMyKey(){
+	public Double getMyKey(){
 		return this.element.getMyKey();
 	}
 	

@@ -88,6 +88,6 @@ public abstract class YARNHistoryJob {
 		this.vcoreSec = vcoreSec;
 	}
 	
-	public abstract int getX();
+	public abstract Double getX();
 }
 

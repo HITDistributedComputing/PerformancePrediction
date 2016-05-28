@@ -55,10 +55,11 @@ public class Test {
 					//construct the new map
 					nameMap = new HashMap<String, JobType>();
 					//construct history jobs of the current type
-					historyJobs = new ArrayList<YARNHistoryJob>();
-					historyJobs.add(yarnHistoryJob);
+					
+//					historyJobs = new ArrayList<YARNHistoryJob>();
+//					historyJobs.add(yarnHistoryJob);
 					//adding the current job type to the map
-					jobType = constructJobType(type, name, historyJobs);
+					jobType = constructJobType(type, name, yarnHistoryJob);
 					nameMap.put(name, jobType);
 					frameMap.put(type, nameMap);
 				}
@@ -67,10 +68,11 @@ public class Test {
 					//name map exists but the application of current name haven't been executed
 					if (nameMap.get(name) == null) {
 						//construct history jobs of the current type
-						historyJobs = new ArrayList<YARNHistoryJob>();
-						historyJobs.add(yarnHistoryJob);
+						
+//						historyJobs = new ArrayList<YARNHistoryJob>();
+//						historyJobs.add(yarnHistoryJob);
 						//adding the current job type to the map
-						jobType = constructJobType(type, name, historyJobs);
+						jobType = constructJobType(type, name, yarnHistoryJob);
 						nameMap.put(name, jobType);
 					}
 					else {
@@ -135,10 +137,10 @@ public class Test {
 	}
 	
 	public static JobType constructJobType(String type, String name,
-			ArrayList<YARNHistoryJob> historyJobs){
+			YARNHistoryJob historyJob){
 		switch (type) {
 		case "SPARK":
-			return new SparkJobType(type, name, historyJobs);
+			return new SparkJobType(type, name, historyJob);
 
 		default:
 			return null;

@@ -6,9 +6,9 @@ public class Host extends Sortable{
 	private String hostPort;
 	private long inputSize;
 	private int totalTask;
-	private int totalDuration;
+	private Double totalDuration;
 	
-	public Host(String hostPort, long inputSize, int totalTask, int totalDuration) {
+	public Host(String hostPort, long inputSize, int totalTask, Double totalDuration) {
 		super();
 		this.hostPort = hostPort;
 		this.inputSize = inputSize;
@@ -45,16 +45,16 @@ public class Host extends Sortable{
 		this.totalTask = totalTask;
 	}
 
-	public int getTotalDuration() {
+	public Double getTotalDuration() {
 		return totalDuration;
 	}
 
-	public void setTotalDuration(int totalDuration) {
+	public void setTotalDuration(Double totalDuration) {
 		this.totalDuration = totalDuration;
 	}
 
 	@Override
-	public int getMyKey() {
+	public Double getMyKey() {
 		// TODO Auto-generated method stub
 		return this.getTotalDuration();
 	}

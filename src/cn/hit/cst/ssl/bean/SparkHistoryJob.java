@@ -25,7 +25,7 @@ public class SparkHistoryJob extends YARNHistoryJob {
 		this.hosts = new ArrayList<Host>();
 		for (int i = 6; i < lineArray.length; i+= 4) {
 			this.addHost(new Host(lineArray[i], Long.valueOf(lineArray[i + 1]), 
-					Integer.valueOf(lineArray[i + 2]), Integer.valueOf(lineArray[i + 3])));
+					Integer.valueOf(lineArray[i + 2]), Double.valueOf(lineArray[i + 3])));
 		}
 	}
 	
@@ -55,12 +55,20 @@ public class SparkHistoryJob extends YARNHistoryJob {
 		sortHostByDuration();
 	}
 	
-	public int getX(){
+	public Double getX(){
 		return hosts.get(0).getTotalDuration();
+	}
+	
+	public Double getXbyTaskTime(Double avgTaskTime){
+		return this.getLongestHost().getTotalTask() * avgTaskTime; 
 	}
 	
 	public void addHost(Host host){
 		this.hosts.add(host);
 		sortHostByDuration();
+	}
+	
+	public Host getLongestHost(){
+		return this.hosts.get(0);
 	}
 }

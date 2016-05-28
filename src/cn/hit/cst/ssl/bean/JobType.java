@@ -11,20 +11,12 @@ public abstract class JobType {
 	protected String name;
 	protected ArrayList<YARNHistoryJob> historyJobs;
 	
-	public JobType(PredictionModel predictor, String type,
-			String name, ArrayList<YARNHistoryJob> historyJobs) {
-		super();
-		this.predictor = predictor;
-		this.type = type;
-		this.name = name;
-		this.historyJobs = historyJobs;
-	}
-	
-	public JobType(String type, String name, ArrayList<YARNHistoryJob> historyJobs) {
+	public JobType(String type, String name, YARNHistoryJob historyJob) {
 		super();
 		this.type = type;
 		this.name = name;
-		this.historyJobs = historyJobs;
+		this.historyJobs = new ArrayList<YARNHistoryJob>();
+		this.historyJobs.add(historyJob);
 	}
 
 	public PredictionModel getPredictor() {
