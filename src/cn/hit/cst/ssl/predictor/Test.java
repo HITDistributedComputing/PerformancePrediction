@@ -15,7 +15,6 @@ import cn.hit.cst.ssl.bean.SparkJobType;
 import cn.hit.cst.ssl.bean.YARNHistoryJob;
 import cn.hit.cst.ssl.exception.NullModelException;
 import cn.hit.cst.ssl.utils.FileUtils;
-import sun.awt.image.OffScreenImage;
 
 public class Test {
 	//args[0]: input file path
@@ -36,7 +35,7 @@ public class Test {
 		YARNHistoryJob yarnHistoryJob; 
 		
 		ArrayList<String> jobData = new ArrayList<String>();
-		jobData.add("AppId\tName\tType\tMBSec\tVCoreSec\tPredictedMB\tPredictedCPU\n");
+		jobData.add("AppId\tName\tType\tMBSec\tVCoreSec\tDuration\tPredictedDuration\tPredictedMB\tPredictedCPU\n");
 
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -98,9 +97,14 @@ public class Test {
 //						}
 						else if(count > modelRange){
 							try {
-								jobData.add(yarnHistoryJob.getJobHistoryTable()
+								SparkJobType sparkJobType = (SparkJobType) jobType;
+								jobData.add(((SparkHistoryJob)yarnHistoryJob).getJobHistoryTable()
+										+ sparkJobType.predictLongestDurationByIndex(count - 1) + "\t"
 										+ jobType.predictMBSecByIndex(count - 1) + "\t"
 										+ jobType.predictVCoreSecByIndex(count - 1) + "\n");
+//								jobData.add(yarnHistoryJob.getJobHistoryTable()
+//										+ jobType.predictMBSecByIndex(count - 1) + "\t"
+//										+ jobType.predictVCoreSecByIndex(count - 1) + "\n");
 							} catch (NullModelException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
