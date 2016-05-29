@@ -13,12 +13,13 @@ import org.json.JSONObject;
 
 public class JobHistory {
 	private String appId;
+	private String jobId;
 	private String name;
 	private String type;
 	private String inputSize;
-	private int elapsedTime;
-	private int mbSec;
-	private int vcoreSec;
+	private double elapsedTime;
+	private double mbSec;
+	private double vcoreSec;
 	private Map<String, Long> inputSizeMap;
 	public static String inputMapFilePath = "D://Data//inputMap";
 	
@@ -28,6 +29,11 @@ public class JobHistory {
 		initInputMap();
 		this.appId = appId;
 		this.inputSize = inputSize;
+	}
+	
+	
+	public JobHistory(){
+		
 	}
 	
 	public void initInputMap(){
@@ -81,6 +87,14 @@ public class JobHistory {
 		this.appId = appId;
 	}
 	
+	public String getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -105,27 +119,31 @@ public class JobHistory {
 		this.inputSize = inputSize;
 	}
 	
-	public int getElapsedTime() {
+	public double getElapsedTime() {
 		return elapsedTime;
 	}
 	
-	public void setElapsedTime(int elapsedTime) {
+	public void setElapsedTime(double elapsedTime) {
 		this.elapsedTime = elapsedTime;
 	}
 	
-	public int getMbSec() {
+	public double getMbSec() {
 		return mbSec;
 	}
 	
-	public void setMbSec(int mbSec) {
+	public void setMbSec(double mbSec) {
 		this.mbSec = mbSec;
 	}
 	
-	public int getVcoreSec() {
+	public double getVcoreSec() {
 		return vcoreSec;
 	}
 	
-	public void setVcoreSec(int vcoreSec) {
+	public void setVcoreSec(double vcoreSec) {
 		this.vcoreSec = vcoreSec;
+	}
+	
+	public Map getInputSizeMap(){
+		return inputSizeMap;
 	}
 }

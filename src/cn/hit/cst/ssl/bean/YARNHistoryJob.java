@@ -6,13 +6,13 @@ public abstract class YARNHistoryJob {
 	protected String name;
 	//type = framework type
 	protected String type;
-	protected int elapsedTime;
-	protected long mbSec;
-	protected int vcoreSec;
+	protected double elapsedTime;
+	protected double mbSec;
+	protected double vcoreSec;
 	
 	public YARNHistoryJob(String appId, String name, String type, 
-			int elapsedTime, long mbSec,
-			int vcoreSec){
+			double elapsedTime, double mbSec,
+			double vcoreSec){
 		this.appId = appId;
 		this.name = name;
 		this.type = type;
@@ -26,9 +26,9 @@ public abstract class YARNHistoryJob {
 		this.appId = lineArray[0];
 		this.name = lineArray[1];
 		this.type = lineArray[2];
-		this.elapsedTime = Integer.valueOf(lineArray[3]);
-		this.mbSec = Long.valueOf(lineArray[4]);
-		this.vcoreSec = Integer.valueOf(lineArray[5]);
+		this.elapsedTime = Double.valueOf(lineArray[3]);
+		this.mbSec = Double.valueOf(lineArray[4]);
+		this.vcoreSec = Double.valueOf(lineArray[5]);
 	}
 	
 	//AppId name type input elapsedTime mb-sec vcore-sec
@@ -64,27 +64,27 @@ public abstract class YARNHistoryJob {
 		this.type = type;
 	}
 
-	public int getElapsedTime() {
+	public double getElapsedTime() {
 		return elapsedTime;
 	}
 
-	public void setElapsedTime(int elapsedTime) {
+	public void setElapsedTime(double elapsedTime) {
 		this.elapsedTime = elapsedTime;
 	}
 
-	public long getMbSec() {
+	public double getMbSec() {
 		return mbSec;
 	}
 
-	public void setMbSec(long mbSec) {
+	public void setMbSec(double mbSec) {
 		this.mbSec = mbSec;
 	}
 
-	public int getVcoreSec() {
+	public double getVcoreSec() {
 		return vcoreSec;
 	}
 
-	public void setVcoreSec(int vcoreSec) {
+	public void setVcoreSec(double vcoreSec) {
 		this.vcoreSec = vcoreSec;
 	}
 	

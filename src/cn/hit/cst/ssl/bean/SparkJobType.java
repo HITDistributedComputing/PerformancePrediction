@@ -4,54 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sun.corba.se.spi.activation.Server;
-
 import cn.hit.cst.ssl.bean.jsonbean.Host;
 import cn.hit.cst.ssl.exception.NullModelException;
-import cn.hit.cst.ssl.predictor.PredictionModel;
 import cn.hit.cst.ssl.predictor.regression.DualLinearRegressionModel;
 
 public class SparkJobType extends JobType {
 	//avgTaskTime on server "String"
 	//update scenario: whenever a new history job is added to JobType
 	private Map<String, ServerAvgTaskTime> avgTaskTimeMap;
-	
-	public class ServerAvgTaskTime{
-		private Double avgTaskTime;
-		private int taskCount;
-		
-		public ServerAvgTaskTime(Double avgTaskTime, int taskCount) {
-			super();
-			this.avgTaskTime = avgTaskTime;
-			this.taskCount = taskCount;
-		}
-
-		public Double getAvgTaskTime() {
-			return avgTaskTime;
-		}
-
-		public void setAvgTaskTime(Double avgTaskTime) {
-			this.avgTaskTime = avgTaskTime;
-		}
-
-		public int getTaskCount() {
-			return taskCount;
-		}
-
-		public void setTaskCount(int taskCount) {
-			this.taskCount = taskCount;
-		}
-		//the only function for updating avgTaskTime
-		//TODO:
-		//1. update avgTT D
-		//2. update taskCount D
-		//3. problem still exists: whether it's proper to see a job as an average unit
-		//(we can substitute by using a task as an average unit
-		public void update(Double newTaskTime){
-			this.avgTaskTime = ((this.avgTaskTime * taskCount) + newTaskTime) / (taskCount + 1);
-			this.taskCount ++;
-		}
-	}
 	
 	public SparkJobType(String type, String name, 
 			YARNHistoryJob sparkHistoryJob) {
@@ -60,12 +20,10 @@ public class SparkJobType extends JobType {
 		
 		ArrayList<Host> hosts = ((SparkHistoryJob)sparkHistoryJob).getHosts();
 		ServerAvgTaskTime serverAvgTaskTime;
-		Double avgTaskTime;
 		
 		for (Host host : hosts) {
-			avgTaskTime = host.getTotalDuration() / host.getTotalTask();
 			//create new ServerAvgTaskTime
-			serverAvgTaskTime = new ServerAvgTaskTime(avgTaskTime, 1);
+			serverAvgTaskTime = new ServerAvgTaskTime(host.getTotalDuration(), host.getTotalTask());
 			this.avgTaskTimeMap.put(host.getHostPort(), serverAvgTaskTime);
 		}
 	}
@@ -109,21 +67,41 @@ public class SparkJobType extends JobType {
 		//temp variables for iteration
 		Host host;
 		String hostPort;
-		Double avgTaskTime;
+//		Double avgTaskTime;
+		Double totalDuration;
+		int totalTask;
 		ServerAvgTaskTime serverAvgTaskTime;
 		
 		for (int i = 0;  i < hosts.size(); i++){
 			host = hosts.get(i);
 			hostPort = host.getHostPort();
-			avgTaskTime = host.getTotalDuration() / host.getTotalTask();
+			//if the total task of a job on a host is 0
+			if (host.getTotalDuration() == 0 || host.getTotalTask() == 0) {
+				System.out.println(historyJob.getAppId() + " consists of 0 tasks");
+				return;
+			}
+			totalDuration = host.getTotalDuration();
+			totalTask = host.getTotalTask();
 			if (this.avgTaskTimeMap.get(hostPort) == null) {
-				serverAvgTaskTime = new ServerAvgTaskTime(avgTaskTime, 1);
+				serverAvgTaskTime = new ServerAvgTaskTime(totalDuration, totalTask);
 				avgTaskTimeMap.put(hostPort, serverAvgTaskTime);
 			}
 			else {
 				serverAvgTaskTime = this.avgTaskTimeMap.get(hostPort);
-				serverAvgTaskTime.update(avgTaskTime);
+//				System.out.println("Updating " + sparkHistoryJob.getAppId());
+				serverAvgTaskTime.update(totalDuration, totalTask);
 			}
+			//here is to predict duration using strategies that see a job host history as a unit for average
+//			avgTaskTime = host.getTotalDuration() / host.getTotalTask();
+//			if (this.avgTaskTimeMap.get(hostPort) == null) {
+//				serverAvgTaskTime = new ServerAvgTaskTime(avgTaskTime);
+//				avgTaskTimeMap.put(hostPort, serverAvgTaskTime);
+//			}
+//			else {
+//				serverAvgTaskTime = this.avgTaskTimeMap.get(hostPort);
+//				System.out.println("Updating " + sparkHistoryJob.getAppId());
+//				serverAvgTaskTime.update(avgTaskTime);
+//			}
 		}
 	}
 
@@ -146,6 +124,18 @@ public class SparkJobType extends JobType {
 		SparkHistoryJob jobHistory = (SparkHistoryJob)this.historyJobs.get(index);
 		String hostName = jobHistory.getLongestHost().getHostPort();
 		Double avgTaskTime = this.avgTaskTimeMap.get(hostName).getAvgTaskTime();
-		return this.getPredictor().predictMBSec(jobHistory.getXbyTaskTime(avgTaskTime));
+		return this.getPredictor().predictVCoreSec(jobHistory.getXbyTaskTime(avgTaskTime));
+	}
+	
+	public double predictLongestDurationByIndex(int index) throws NullModelException {
+		// TODO Auto-generated method stub
+		//1. predict directly by duration
+//		SparkHistoryJob jobHistory = (SparkHistoryJob)this.historyJobs.get(index);
+//		return this.getPredictor().predictVCoreSec(jobHistory.getX());
+		//2. predict by calculating duration through avgTaskTime
+		SparkHistoryJob jobHistory = (SparkHistoryJob)this.historyJobs.get(index);
+		String hostName = jobHistory.getLongestHost().getHostPort();
+		Double avgTaskTime = this.avgTaskTimeMap.get(hostName).getAvgTaskTime();
+		return jobHistory.getXbyTaskTime(avgTaskTime);
 	}
 }

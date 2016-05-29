@@ -29,6 +29,13 @@ public class SparkHistoryJob extends YARNHistoryJob {
 		}
 	}
 	
+	//AppId name type input elapsedTime mb-sec vcore-sec
+	@Override
+	public String getJobHistoryTable(){
+		return super.getJobHistoryTable() 
+				+ this.getLongestHost().getTotalDuration() + "\t";
+	}
+	
 	public String getNewSparkHistoryJob(){
 		String newSparkHistoryJob = appId + "\t" + name + "\t" + type + "\t" 
 				+ elapsedTime + "\t" + mbSec + "\t" + vcoreSec + "\t";
