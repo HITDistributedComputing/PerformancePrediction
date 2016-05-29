@@ -83,10 +83,12 @@ public class Test {
 						//count: current history job count of jobType
 						int count = jobType.getHistoryJobs().size();
 						int modelRange = Integer.valueOf(args[1]);
-						if (count == modelRange) {
+						//controls when to train the model
+						//if (count == modelRange){
+						if ((count % modelRange == 0)) {
 							//TODO: train the corresponding model
 							System.out.println(jobType.getType() + " "
-									+ jobType.getName() + " job reaches " + args[1] + "...");
+									+ jobType.getName() + " job reaches " + count + "...");
 							jobType.trainModel();
 						}
 						//2. train it whenever args[1] history job has been added

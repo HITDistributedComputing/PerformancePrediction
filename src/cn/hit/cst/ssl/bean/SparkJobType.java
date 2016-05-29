@@ -88,7 +88,7 @@ public class SparkJobType extends JobType {
 			}
 			else {
 				serverAvgTaskTime = this.avgTaskTimeMap.get(hostPort);
-				System.out.println("Updating " + sparkHistoryJob.getAppId());
+//				System.out.println("Updating " + sparkHistoryJob.getAppId());
 				serverAvgTaskTime.update(totalDuration, totalTask);
 			}
 			//here is to predict duration using strategies that see a job host history as a unit for average
