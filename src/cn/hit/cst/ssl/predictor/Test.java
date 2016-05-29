@@ -35,6 +35,7 @@ public class Test {
 		File file = new File(args[0]);
 		String line, type, name;
 		YARNHistoryJob yarnHistoryJob; 
+		int modelRange = Integer.valueOf(args[1]);
 		
 		ArrayList<String> jobData = new ArrayList<String>();
 		jobData.add("AppId\tName\tType\tMBSec\tVCoreSec\tDuration\tPredictedDuration\tPredictedMB\tPredictedCPU\n");
@@ -90,7 +91,6 @@ public class Test {
 						//1. train it only when the count of a type reach args[1]
 						//count: current history job count of jobType
 						int count = jobType.getHistoryJobs().size();
-						int modelRange = Integer.valueOf(args[1]);
 						//controls when to train the model
 						//if (count == modelRange){
 						if ((count % modelRange == 0)) {
