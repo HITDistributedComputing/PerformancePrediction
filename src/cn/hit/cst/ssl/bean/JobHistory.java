@@ -17,9 +17,9 @@ public class JobHistory {
 	private String name;
 	private String type;
 	private String inputSize;
-	private int elapsedTime;
-	private int mbSec;
-	private int vcoreSec;
+	private double elapsedTime;
+	private double mbSec;
+	private double vcoreSec;
 	private Map<String, Long> inputSizeMap;
 	public static String inputMapFilePath = "D://Data//inputMap";
 	
@@ -119,27 +119,27 @@ public class JobHistory {
 		this.inputSize = inputSize;
 	}
 	
-	public int getElapsedTime() {
+	public double getElapsedTime() {
 		return elapsedTime;
 	}
 	
-	public void setElapsedTime(int elapsedTime) {
+	public void setElapsedTime(double elapsedTime) {
 		this.elapsedTime = elapsedTime;
 	}
 	
-	public int getMbSec() {
+	public double getMbSec() {
 		return mbSec;
 	}
 	
-	public void setMbSec(int mbSec) {
+	public void setMbSec(double mbSec) {
 		this.mbSec = mbSec;
 	}
 	
-	public int getVcoreSec() {
+	public double getVcoreSec() {
 		return vcoreSec;
 	}
 	
-	public void setVcoreSec(int vcoreSec) {
+	public void setVcoreSec(double vcoreSec) {
 		this.vcoreSec = vcoreSec;
 	}
 	

@@ -14,7 +14,9 @@ import cn.hit.cst.ssl.bean.SparkHistoryJob;
 import cn.hit.cst.ssl.bean.SparkJobType;
 import cn.hit.cst.ssl.bean.YARNHistoryJob;
 import cn.hit.cst.ssl.exception.NullModelException;
+import cn.hit.cst.ssl.exception.XYArraySizeException;
 import cn.hit.cst.ssl.utils.FileUtils;
+import cn.hit.cst.ssl.visualization.ScatterPlotter;
 
 public class Test {
 	//args[0]: input file path
@@ -36,7 +38,13 @@ public class Test {
 		
 		ArrayList<String> jobData = new ArrayList<String>();
 		jobData.add("AppId\tName\tType\tMBSec\tVCoreSec\tDuration\tPredictedDuration\tPredictedMB\tPredictedCPU\n");
-
+		//actual vs. predicted result array
+		ArrayList<Double> mbSecArray = new ArrayList<Double>(), 
+				vcoreSecArray = new ArrayList<Double>(), 
+				longestDurationArray = new ArrayList<Double>(),
+				preMbSecArray = new ArrayList<Double>(),
+				preVcoreSecArray = new ArrayList<Double>(),
+				preDurationArray = new ArrayList<Double>();
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			reader.readLine();
@@ -99,11 +107,25 @@ public class Test {
 //						}
 						else if(count > modelRange){
 							try {
+								//TODO: extend to other frameworks
 								SparkJobType sparkJobType = (SparkJobType) jobType;
+								Double preDuration = sparkJobType.predictLongestDurationByIndex(count - 1), 
+										preMbSec = sparkJobType.predictMBSecByIndex(count - 1), 
+										preVcoreSec = sparkJobType.predictVCoreSecByIndex(count - 1);
+								//TODO: 1. pass predicted vs. actual value for visualizing data
+								//2. calculate outside the loop to avoid unnecessary computation 
+								SparkHistoryJob sparkHistoryJob = (SparkHistoryJob)yarnHistoryJob;
+								longestDurationArray.add(sparkHistoryJob.getLongestHost().getTotalDuration());
+								mbSecArray.add(sparkHistoryJob.getMbSec());
+								vcoreSecArray.add(sparkHistoryJob.getVcoreSec());
+								preDurationArray.add(preDuration);
+								preMbSecArray.add(preMbSec);
+								preVcoreSecArray.add(preVcoreSec);
+								//
 								jobData.add(((SparkHistoryJob)yarnHistoryJob).getJobHistoryTable()
-										+ sparkJobType.predictLongestDurationByIndex(count - 1) + "\t"
-										+ jobType.predictMBSecByIndex(count - 1) + "\t"
-										+ jobType.predictVCoreSecByIndex(count - 1) + "\n");
+										+ preDuration + "\t"
+										+ preMbSec + "\t"
+										+ preVcoreSec + "\n");
 //								jobData.add(yarnHistoryJob.getJobHistoryTable()
 //										+ jobType.predictMBSecByIndex(count - 1) + "\t"
 //										+ jobType.predictVCoreSecByIndex(count - 1) + "\n");
@@ -131,11 +153,17 @@ public class Test {
 //					}
 //				}
 			}
+			ScatterPlotter.scatterRegressionPlot(longestDurationArray, preDurationArray, "Actual", "Predicted");
+//			ScatterPlotter.scatterPlot(longestDurationArray, preDurationArray, 
+//					"Predicted vs. Actual Longest Duration", "Actual", "Predicted");
 			FileUtils.writeToFile(args[2], jobData);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XYArraySizeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
