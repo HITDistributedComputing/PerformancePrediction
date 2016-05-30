@@ -18,10 +18,24 @@ import cn.hit.cst.ssl.exception.XYArraySizeException;
 import cn.hit.cst.ssl.utils.FileUtils;
 import cn.hit.cst.ssl.visualization.ScatterPlotter;
 
+/** 
+* @ClassName: Test 
+* @Description: Test class for performance prediction and results visualization 
+* @author Yukun Zeng
+* @date May 30, 2016 1:26:29 PM 
+*  
+*/
 public class Test {
-	//args[0]: input file path
-	//args[1]: start to train the model when we got args[1] samples
-	//args[2]: file path for output prediction results
+	/**
+	 * 
+	 * @Method: main function for making predictions and visualizing
+	 * @Description: TODO
+	 * @param args
+	 * args[0]: input file path
+	 * args[1]: start to train the model when we got args[1] samples
+	 * args[2]: file path for output prediction results
+	 * @return void
+	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//ÊäÈë×÷Òµfeature
@@ -169,7 +183,19 @@ public class Test {
 		}
 		
 	}
-	
+	/**
+	 * 
+	 * @Method: constructJobType
+	 * @Description: construct different job type obj according to the input
+	 * @param type
+	 * job type string
+	 * @param name
+	 * job name string
+	 * @param historyJob
+	 * the first history job data
+	 * @return JobType
+	 * newly constructed job type obj
+	 */
 	public static JobType constructJobType(String type, String name,
 			YARNHistoryJob historyJob){
 		switch (type) {
@@ -180,7 +206,15 @@ public class Test {
 			return null;
 		}
 	}
-	
+	/**
+	 * 
+	 * @Method: constructHistoryJob
+	 * @Description: 
+	 * @param line
+	 * the line from the file that contains history job data
+	 * @return YARNHistoryJob
+	 * newly constructed yarn history job
+	 */
 	public static YARNHistoryJob constructHistoryJob(String line){
 		String type = line.split("\t")[2];
 		switch (type) {

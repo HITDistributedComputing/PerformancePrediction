@@ -11,6 +11,14 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+/** 
+* @ClassName: JobHistory 
+* @Description: work as a functional java bean for storing job history data
+* @author Yukun Zeng
+* @date May 30, 2016 3:01:30 PM 
+*  
+*/
 public class JobHistory {
 	private String appId;
 	private String jobId;
@@ -23,6 +31,15 @@ public class JobHistory {
 	private Map<String, Long> inputSizeMap;
 	public static String inputMapFilePath = "D://Data//inputMap";
 	
+	/**
+	 * 
+	 * @Description: most-used constructor which simply constructs the obj by appId and InputSize,
+	 * we still need to use other setters to fulfill all elements in the class
+	 * @param appId
+	 * the application ID of a YARN job
+	 * @param
+	 * the inputSize of this application
+	 */
 	public JobHistory(String appId, String inputSize) {
 		super();
 		inputSizeMap = new HashMap<String, Long>();
@@ -35,7 +52,12 @@ public class JobHistory {
 	public JobHistory(){
 		
 	}
-	
+	/**
+	 * 
+	 * @Method: initInputMap
+	 * @Description: set input size map using confs from specified file inputMapFilePath
+	 * @return void
+	 */
 	public void initInputMap(){
 		File inputMapFile = new File(inputMapFilePath);
 		BufferedReader mapReader;
@@ -59,7 +81,14 @@ public class JobHistory {
 		}
 		
 	}
-	
+	/**
+	 * 
+	 * @Method: setByJSON
+	 * @Description: set bean properties directly by json object
+	 * @param appJo data source, json object that stores job history data
+	 * @throws JSONException 
+	 * @return void
+	 */
 	public void setByJSON(JSONObject appJo) throws JSONException{
 		this.name = appJo.getString("name");
 		this.type = appJo.getString("applicationType");
@@ -68,7 +97,13 @@ public class JobHistory {
 		this.vcoreSec = Integer.valueOf(appJo.getString("vcoreSeconds"));
 	}
 	
-	//AppId name type input elapsedTime mb-sec vcore-sec
+	
+	/**
+	 * 
+	 * @Method: getJobHistoryTable
+	 * @Description: get table-formatted job history data from java bean
+	 * @return String appId\t name\t type\t inputSize\t elapsedTime\t mbSec\t vcoreSec\n
+	 */
 	public String getJobHistoryTable(){
 		return this.appId + "\t"
 				+ this.name + "\t"
@@ -143,7 +178,7 @@ public class JobHistory {
 		this.vcoreSec = vcoreSec;
 	}
 	
-	public Map getInputSizeMap(){
+	public Map<String, Long> getInputSizeMap(){
 		return inputSizeMap;
 	}
 }

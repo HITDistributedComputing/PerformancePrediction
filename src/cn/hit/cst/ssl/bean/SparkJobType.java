@@ -7,7 +7,14 @@ import java.util.Map;
 import cn.hit.cst.ssl.bean.jsonbean.Host;
 import cn.hit.cst.ssl.exception.NullModelException;
 import cn.hit.cst.ssl.predictor.regression.DualLinearRegressionModel;
-
+/**
+ * 
+* @ClassName: SparkJobType 
+* @Description: the class that holds spark framework detailed parameters for predicting x in our linear regression model
+* @author Yukun Zeng
+* @date May 30, 2016 4:30:50 PM 
+*
+ */
 public class SparkJobType extends JobType {
 	//avgTaskTime on server "String"
 	//update scenario: whenever a new history job is added to JobType
