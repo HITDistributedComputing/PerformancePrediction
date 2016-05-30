@@ -1,5 +1,12 @@
 package cn.hit.cst.ssl.bean.jsonbean;
-
+/**
+ * 
+* @ClassName: Executor 
+* @Description: JavaBean for executor info (used for file storage) we can get from JSON of spark history server
+* @author Yukun Zeng
+* @date May 30, 2016 5:50:27 PM 
+*
+ */
 public class Executor{
 	private int id;
 	private String host;

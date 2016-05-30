@@ -1,5 +1,12 @@
 package cn.hit.cst.ssl.bean.jsonbean;
-
+/**
+ * 
+* @ClassName: Stage 
+* @Description: JavaBean for job stage info we can get from JSON of spark history server
+* @author Yukun Zeng
+* @date May 30, 2016 5:53:42 PM 
+*
+ */
 public class Stage {
 	private int stageId;
 	private int attemptId;

@@ -4,7 +4,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.hit.cst.ssl.bean.JobHistory;
-
+/**
+ * 
+* @ClassName: MapReduceHistory 
+* @Description: JavaBean for mapreduce job detailed info we can get from JSON of MR history server
+* @author Yukun Zeng
+* @date May 30, 2016 5:52:33 PM 
+*
+ */
 public class MapReduceHistory extends JobHistory {
 	
 	private String jobId;

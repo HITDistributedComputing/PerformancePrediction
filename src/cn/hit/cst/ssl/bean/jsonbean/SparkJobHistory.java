@@ -4,7 +4,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.hit.cst.ssl.bean.JobHistory;
-
+/**
+ * 
+* @ClassName: SparkJobHistory 
+* @Description: JavaBean for spark history job info we can get from JSON of spark history server
+* @author Yukun Zeng
+* @date May 30, 2016 5:53:18 PM 
+*
+ */
 public class SparkJobHistory extends JobHistory {
 	
 	private String executorId;

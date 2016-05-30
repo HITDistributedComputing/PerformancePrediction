@@ -1,7 +1,14 @@
 package cn.hit.cst.ssl.bean.jsonbean;
 
 import cn.hit.cst.ssl.utils.Sortable;
-
+/**
+ * 
+* @ClassName: Host 
+* @Description: JavaBean for job host info (used in our prediction) we can get from JSON of spark history server
+* @author Yukun Zeng
+* @date May 30, 2016 5:51:07 PM 
+*
+ */
 public class Host extends Sortable{
 	private String hostPort;
 	private long inputSize;

@@ -1,5 +1,12 @@
 package cn.hit.cst.ssl.bean.jsonbean;
-
+/**
+ * 
+* @ClassName: Job 
+* @Description: JavaBean for job info we can get from JSON of spark history server
+* @author Yukun Zeng
+* @date May 30, 2016 5:52:17 PM 
+*
+ */
 public class Job {
 	private int jobId;
 	private String name;
