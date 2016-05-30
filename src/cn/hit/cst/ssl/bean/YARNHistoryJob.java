@@ -114,7 +114,13 @@ public abstract class YARNHistoryJob {
 	public void setVcoreSec(double vcoreSec) {
 		this.vcoreSec = vcoreSec;
 	}
-	
+	/**
+	 * 
+	 * @Method: getX
+	 * @Description: abstract method for returning the X that our model needs
+	 * @return Double
+	 * the X that our model needs
+	 */
 	public abstract Double getX();
 }
 
