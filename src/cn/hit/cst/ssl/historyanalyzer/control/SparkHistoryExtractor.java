@@ -11,7 +11,14 @@ import org.json.JSONObject;
 import cn.hit.cst.ssl.bean.jsonbean.SparkJobHistory;
 import cn.hit.cst.ssl.utils.FileUtils;
 import cn.hit.cst.ssl.utils.JSONUtils;
-
+/**
+ * 
+* @ClassName: SparkHistoryExtractor 
+* @Description: extract spark history job data
+* @author Wenhao Fan
+* @date May 31, 2016 10:14:59 AM 
+*
+ */
 public class SparkHistoryExtractor {
 
 	public static void main(String[] args) {

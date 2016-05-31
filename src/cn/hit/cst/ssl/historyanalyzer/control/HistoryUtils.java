@@ -8,7 +8,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.hit.cst.ssl.utils.FileUtils;
-
+/**
+ * 
+* @ClassName: HistoryUtils 
+* @Description: History Utils to do some processing and simplifying work for our history files
+* @author Yukun Zeng
+* @date May 30, 2016 6:16:00 PM 
+*
+ */
 public class HistoryUtils {
 	//args[0]: input file path
 	//args[1]: output file path
@@ -20,7 +27,17 @@ public class HistoryUtils {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * 
+	 * @Method: simplifySparkHistory
+	 * @Description: simplifies the history data we get from REST api
+	 * @param filePath
+	 * the input file path 
+	 * @param newPath
+	 * output file path
+	 * @throws IOException
+	 * @return void
+	 */
 	public static void simplifySparkHistory(String filePath, String newPath) throws IOException{
 		File file = new File(filePath);
 		BufferedReader reader = new BufferedReader(new FileReader(file));

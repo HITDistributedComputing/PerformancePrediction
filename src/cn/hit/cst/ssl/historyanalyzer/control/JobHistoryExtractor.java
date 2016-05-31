@@ -10,10 +10,24 @@ import org.json.JSONObject;
 import cn.hit.cst.ssl.bean.JobHistory;
 import cn.hit.cst.ssl.utils.FileUtils;
 import cn.hit.cst.ssl.utils.JSONUtils;
-
+/**
+ * 
+* @ClassName: JobHistoryExtractor 
+* @Description: extract YARN-general job history data based on log files and REST API
+* @author Yukun Zeng
+* @date May 31, 2016 9:52:37 AM 
+*
+ */
 public class JobHistoryExtractor {
-	//@args[0]: job log files input directory
-	//@args[1]: job data output file path
+	/**
+	 * 
+	 * @Method: main
+	 * @Description: TODO
+	 * @param args
+	 * args[0]: job log files input directory
+	 * args[1]: job data output file path
+	 * @return void
+	 */
 	public static void main(String[] args){
 		//File[] logFiles = FileUtils.iterateFiles(args[0]);
 		File[] logFiles = FileUtils.manItrFiles(args[0], "job", 200);
@@ -25,7 +39,15 @@ public class JobHistoryExtractor {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * 
+	 * @Method: retrieveJobData
+	 * @Description: retrieve job data based on log files and through requesting JSON from REST API
+	 * @param logFiles
+	 * the log files array, which are all collected by our Benchmark
+	 * @return ArrayList<String>
+	 * Arraylist lthat stores the history data as file lines to be write into a file
+	 */
 	public static ArrayList<String> retrieveJobData(File[] logFiles){
 		String jsonStr, requestStr, tmpJobData;
 		JobHistory jobHistory;

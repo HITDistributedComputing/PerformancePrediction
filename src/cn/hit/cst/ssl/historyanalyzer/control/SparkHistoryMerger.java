@@ -10,7 +10,15 @@ import java.util.ArrayList;
 import cn.hit.cst.ssl.bean.SparkHistoryJob;
 import cn.hit.cst.ssl.bean.jsonbean.Host;
 import cn.hit.cst.ssl.utils.FileUtils;
-
+/**
+ * 
+* @ClassName: SparkHistoryMerger 
+* @Description: Raw Data we get from spark REST API are seperated in lines by hosts, we use this class to merge different
+* executors of a job and combine them in a single line
+* @author Yukun Zeng
+* @date May 31, 2016 10:17:01 AM 
+*
+ */
 public class SparkHistoryMerger {
 	
 	public static void main(String args[]){

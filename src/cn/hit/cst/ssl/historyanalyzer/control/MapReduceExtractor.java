@@ -10,7 +10,14 @@ import org.json.JSONObject;
 import cn.hit.cst.ssl.bean.jsonbean.MapReduceHistory;
 import cn.hit.cst.ssl.utils.FileUtils;
 import cn.hit.cst.ssl.utils.JSONUtils;
-
+/**
+ * 
+* @ClassName: MapReduceExtractor 
+* @Description: extract mr-specific job history data
+* @author Wenhao Fan
+* @date May 31, 2016 9:59:49 AM 
+*
+ */
 public class MapReduceExtractor {
 
 	public static void main(String[] args) {
