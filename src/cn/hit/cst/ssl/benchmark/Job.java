@@ -1,4 +1,4 @@
-package cn.hit.cst.ssl.workloadgenerator;
+package cn.hit.cst.ssl.benchmark;
 
 import java.util.HashMap;
 import java.util.Map;

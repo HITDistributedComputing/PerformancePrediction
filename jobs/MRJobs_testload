@@ -1,0 +1,24 @@
+WordCount
+run_MyMicroBenchmarks.sh 2
+/BigDataBench/wordcount/in/
+wiki_nobel 0.1
+wiki_0000000 0.15
+wiki_000000* 0.2
+wiki_00000* 0.2
+wiki_0000* 0.15
+wiki_000* 0.1
+wiki_00* 0.05
+wiki_0* 0.05
+
+Grep
+run_MyMicroBenchmarks.sh 1
+/BigDataBench/wordcount/in/
+wiki_nobel 0.1
+wiki_0000000 0.15
+wiki_000000* 0.2
+wiki_00000* 0.2
+wiki_0000* 0.15
+wiki_000* 0.1
+wiki_00* 0.05
+wiki_0* 0.05
+

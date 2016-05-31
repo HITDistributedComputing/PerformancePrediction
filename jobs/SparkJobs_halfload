@@ -1,0 +1,24 @@
+Grep
+run_SparkMicroBench.sh 1
+/BigDataBench/wordcount/in/
+wiki_nobel_190 0.911
+wiki_nobel_250 0.0131
+wiki_0000000 0.0131
+wiki_000000* 0.015
+wiki_00000* 0.0117
+wiki_0000* 0.011
+wiki_000* 0.0137
+wiki_00* 0.0114
+
+WordCount
+run_SparkMicroBench.sh 2
+/BigDataBench/wordcount/in/
+wiki_nobel_190 0.911
+wiki_nobel_250 0.0131
+wiki_0000000 0.0131
+wiki_000000* 0.015
+wiki_00000* 0.0117
+wiki_0000* 0.011
+wiki_000* 0.0137
+wiki_00* 0.0114
+

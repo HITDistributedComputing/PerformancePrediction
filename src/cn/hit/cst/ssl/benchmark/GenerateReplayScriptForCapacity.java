@@ -1,4 +1,5 @@
-package cn.hit.cst.ssl.workloadgenerator;
+package cn.hit.cst.ssl.benchmark;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;

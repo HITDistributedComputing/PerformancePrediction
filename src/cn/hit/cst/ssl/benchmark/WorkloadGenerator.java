@@ -1,4 +1,4 @@
-package cn.hit.cst.ssl.workloadgenerator;
+package cn.hit.cst.ssl.benchmark;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,7 +16,8 @@ public class WorkloadGenerator {
 	//private MRGenerator mrGenerator;
 	private ArrayList<JobGenerator> jobGenerators;
 	//private static String traceFilePath = "/home/hadoop/workspace/workloads/trace/FB-2009_0_700.tsv";
-	private static String traceFilePath = "/home/hadoop/workspace/workloads/trace/FB-2009_500M_to_50G.tsv";
+	private static String originTraceFilePath = "../trace/FB-2009_0_700.tsv";
+	private static String traceFilePath = "../trace/FB-2009_500M_to_50G.tsv";
 	private Random random;
 	/*
     *
@@ -76,11 +77,27 @@ public class WorkloadGenerator {
    //args[0]: target directory
    //args[1]: max job count
    //args[2]: tenant count
+   //args[3]: 1: generate fb probability workload; 2: generate test probability; 3. generate test all size
    public static void main(String args[]){
 	   WorkloadGenerator workloadGenerator = new WorkloadGenerator();
+	   int opt = Integer.valueOf(args[3]);
 	   //workloadGenerator.generateWorkload();
 	   try {
-		workloadGenerator.generateTestLoad(Integer.valueOf(args[2]), args[0], Integer.valueOf(args[1]));
+		   switch (opt) {
+		case 1:
+			workloadGenerator.generateMultiWorkloads(Integer.valueOf(args[2]), args[0], Integer.valueOf(args[1]));
+			break;
+		case 2:
+			workloadGenerator.generateTestLoad(Integer.valueOf(args[2]), args[0], Integer.valueOf(args[1]), 2);
+			break;
+		case 3:
+			workloadGenerator.generateTestLoad(Integer.valueOf(args[2]), args[0], Integer.valueOf(args[1]), 3);
+			break;
+		default:
+			System.out.println("Param3 can only be 1-3!");
+			break;
+		}
+		//workloadGenerator.generateTestLoad(Integer.valueOf(args[2]), args[0], Integer.valueOf(args[1]));
 		//generate multi scrip of fb trace workload
 		//workloadGenerator.generateMultiWorkloads(Integer.valueOf(args[2]), args[0], Integer.valueOf(args[1]));
 		//generate only 1 script for submitting applications
@@ -129,7 +146,7 @@ public class WorkloadGenerator {
 	   JobGenerator jobGenerator;
 	   try {
 		   //Trace FileInput
-		   parseFileArrayList(this.traceFilePath,
+		   parseFileArrayList(this.originTraceFilePath,
 				   trace, max);
 	   } catch (Exception e) {
 		   // TODO Auto-generated catch block
@@ -169,7 +186,7 @@ public class WorkloadGenerator {
 	   }
    }
    
-   public void generateTestLoad(int shellCount, String dir, int max) throws IOException{
+   public void generateTestLoad(int shellCount, String dir, int max, int mode) throws IOException{
 	   
 	   ArrayList<ArrayList<String>> trace = new ArrayList<ArrayList<String>>();
 	   try {
@@ -191,11 +208,16 @@ public class WorkloadGenerator {
 		   for(int j = 0; j < shellCount; j++){
 			   jobGenerator = randomJobGenerator();
 			   currentJob = i * shellCount + j;
-			   //shells[j][i] = jobGenerator.jobGenerator(currentJob + startJobId,
-				//this.random) + "\n";
-			   //use here to generate specified input jobs
-			   shells[j][i] = jobGenerator.jobGenerator(currentJob + startJobId,
-			   this.random, trace.get(currentJob).get(3)) + "\n";
+			   if (mode == 2) {
+				   //use here to generate job with input size randomed by probability in conf files
+				   shells[j][i] = jobGenerator.jobGenerator(currentJob + startJobId,
+							this.random) + "\n";
+			   }
+			   else if (mode == 3) {
+				   //use here to generate specified input jobs
+				   shells[j][i] = jobGenerator.jobGenerator(currentJob + startJobId,
+				   this.random, trace.get(currentJob).get(3)) + "\n";
+			   }
 		   }
 	   }
 	   for(int i = 0; i < restJobCount; i++){

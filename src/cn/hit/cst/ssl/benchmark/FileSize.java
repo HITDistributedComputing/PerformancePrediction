@@ -1,4 +1,5 @@
-package cn.hit.cst.ssl.workloadgenerator;
+package cn.hit.cst.ssl.benchmark;
+
 public class FileSize {
 	static public String SizeHandle(long size){
 		long fiveHundredMB = 500000000;

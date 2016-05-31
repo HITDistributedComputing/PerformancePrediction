@@ -1,4 +1,4 @@
-package cn.hit.cst.ssl.workloadgenerator;
+package cn.hit.cst.ssl.benchmark;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -15,7 +15,7 @@ public class MRGenerator extends JobGenerator{
 		//TODO: directory problem, how to get the jobs/MRJobs file path?
 		jobs = new ArrayList<Job>();
 		try {
-			jobsReader("/home/hadoop/workspace/workloads/jobs/MRJobs_testload");
+			jobsReader("../jobs/MRJobs_testload");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

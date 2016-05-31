@@ -1,4 +1,4 @@
-package cn.hit.cst.ssl.workloadgenerator;
+package cn.hit.cst.ssl.benchmark;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -103,6 +103,9 @@ public class JobGenerator {
 		job = randomJobType(random);
 		//inputFile = randomInputFile(job.getInputMap());
 		long longSize = Long.parseLong(size);
+		//reduce workload pressure
+		if ( longSize >= 2000000000 )
+		    longSize = longSize / 2;
 		inputFile = FileSize.SizeHandle(longSize);
 		//jobCmd = job.getJobCmd() + " \"" + job.getInputDir() + inputFile
 		//		+ "\" " + jobCount + logCmd;
